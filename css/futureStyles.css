@@ -24,8 +24,13 @@ body {
     background: #000000;
     color: #285fff;
 }
+.meter {
+    transform: rotate(0deg);
+}
 #tempCanvas {
-    background: rgba(255, 0, 0, 0);
+    position: fixed;
+    left: 240px;
+    top: 240px;
 }
 #WebGL-output {
     /* set margin to 0 and overflow to hidden, to go fullscreen */

@@ -188,10 +188,6 @@ Future.prototype.createScene = function() {
         this.root.add(sphereMesh);
     }
 
-    //Canvas bar drawing
-    var c = document.getElementById("tempCanvas");
-    this.ctx = c.getContext("2d");
-
     this.modelLoader.load( 'models/newBrain.obj', function ( object ) {
 
         _this.root.add( object );
@@ -205,6 +201,8 @@ Future.prototype.createScene = function() {
             }
         })
     } );
+
+    barManager.createBars('tempCanvas');
 };
 
 Future.prototype.createGUI = function() {
@@ -338,23 +336,6 @@ Future.prototype.changeLightPos = function(value, axis) {
     }
 };
 
-Future.prototype.drawBars = function(delta) {
-    //Do canvas drawing
-    //Canvas
-    this.barTime += delta;
-
-    if(this.barTime > 5) {
-        this.ctx.strokeStyle = '#0000ff';
-    } else {
-        this.ctx.strokeStyle = '#ff0000';
-    }
-
-    this.ctx.beginPath();
-    this.ctx.moveTo(50, 50);
-    this.ctx.lineTo(200, 50);
-    this.ctx.stroke();
-};
-
 Future.prototype.update = function() {
     //Perform any updates
 //Update data
@@ -365,6 +346,7 @@ Future.prototype.update = function() {
         for(mats=0; mats<this.spriteMats.length; ++mats) {
             this.spriteMats[mats].opacity = (Math.sin(this.glowTime)/2.0) + 0.5;
         }
+
     }
 
     if(this.guiControls.NeuroData) {
@@ -396,6 +378,7 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
+            barManager.drawBars(0, this.spriteMats[0].opacity);
         }
     }
 
@@ -445,8 +428,6 @@ Future.prototype.update = function() {
     if(this.loadedModel) {
         this.root.rotation.y += this.rotInc;
     }
-
-    this.drawBars(this.delta);
 
     BaseApp.prototype.update.call(this);
 };
