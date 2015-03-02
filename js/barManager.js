@@ -8,10 +8,10 @@ var barManager = (function() {
     var canvasList = [];
     var offColour = '#2a2a2a';
     var onColour = '#ff0000';
-    var numberBars = 10;
-    var interGap = 30;
-    var lineLength = 150;
-    var lineWidth = 20;
+    var numberBars = 11;
+    var interGap = 20;
+    var lineLength = 100;
+    var lineWidth = 7;
 
     return {
         createBars: function(element) {
@@ -63,8 +63,8 @@ var barManager = (function() {
                 }
                 ctx.beginPath();
                 gap = i*canvas.interGap;
-                ctx.moveTo(canvas.xStart, canvas.yStart+gap);
-                ctx.lineTo(canvas.xStart + canvas.barLength, canvas.yStart+gap);
+                ctx.moveTo(canvas.xStart + gap, canvas.yStart);
+                ctx.lineTo(canvas.xStart + gap, canvas.yStart + canvas.barLength);
                 ctx.stroke();
                 ctx.closePath();
             }
