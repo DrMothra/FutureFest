@@ -39,6 +39,8 @@ var ALPHA_STEADY_TIME = 10;
 //Alpha states
 var DOWN=0, OFF=1, UP=2, ON=3;
 
+var NUM_DIVISIONS = 18;
+
 function Future() {
     BaseApp.call(this);
 }
@@ -202,10 +204,33 @@ Future.prototype.createScene = function() {
         })
     } );
 
-    barManager.createBars('meter1');
-    barManager.createBars('meter2');
-    barManager.createBars('meter3');
-    //barManager.drawBars(0, 0);
+    //Create canvas for each power meter
+    var pos = [
+                1, 40,
+                3.7, 31,
+                3.8, 49,
+                17, 10,
+                17, 65,
+                29, 10,
+                29, 65,
+                41, 10,
+                41, 65,
+                53, 10,
+                53, 65,
+                65, 10,
+                65, 65,
+                77, 10,
+                77, 65,
+                89, 10,
+                89, 65,
+                95, 40
+    ];
+    var rot = [ 0, -20, 20, -40, 40, -60, 60, -80, 80, -100, 100, -120, 120, -140, 140, -160, 160, 180];
+    var p;
+    for(i=0,p=0; i<NUM_DIVISIONS; ++i, p+=2) {
+        canvasManager.createCanvas('meter'+i, pos[p], pos[p+1], rot[i]);
+        barManager.createBars('meter'+i);
+    }
 };
 
 Future.prototype.createGUI = function() {
@@ -217,8 +242,8 @@ Future.prototype.createGUI = function() {
         this.GlowOpacity = 0.7;
         this.RotateSpeed = 0.002;
         this.SinewaveData = false;
-        this.RandomData = false;
-        this.NeuroData = true;
+        this.RandomData = true;
+        this.NeuroData = false;
         //Light Pos
         this.LightX = 200;
         this.LightY = 200;
@@ -381,7 +406,7 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
-            for(i=0; i<3; ++i) {
+            for(i=0; i<brainData.getNumZones(); ++i) {
                 barManager.drawBars(i, this.spriteMats[i].opacity);
             }
         }
