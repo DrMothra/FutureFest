@@ -202,7 +202,10 @@ Future.prototype.createScene = function() {
         })
     } );
 
-    barManager.createBars('tempCanvas');
+    barManager.createBars('meter1');
+    barManager.createBars('meter2');
+    barManager.createBars('meter3');
+    //barManager.drawBars(0, 0);
 };
 
 Future.prototype.createGUI = function() {
@@ -340,7 +343,7 @@ Future.prototype.update = function() {
     //Perform any updates
 //Update data
     this.delta = this.clock.getDelta();
-    var mats = null;
+    var mats = null, i;
 
     if(this.guiControls.SinewaveData) {
         for(mats=0; mats<this.spriteMats.length; ++mats) {
@@ -378,7 +381,9 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
-            barManager.drawBars(0, this.spriteMats[0].opacity);
+            for(i=0; i<3; ++i) {
+                barManager.drawBars(i, this.spriteMats[i].opacity);
+            }
         }
     }
 
