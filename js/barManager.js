@@ -6,15 +6,15 @@
 var barManager = (function() {
     //Default values
     var canvasList = [];
-    var offColour = '#2a2a2a';
-    var onColour = '#ff0000';
+    var offColour = '#646432';
+    var onColour = '#ffff0d';
     var numberBars = 11;
     var interGap = 20;
-    var lineLength = 100;
-    var lineWidth = 7;
+    var lineLength = 70;
+    var lineWidth = 5;
     var barAngleDeg = 1.667;
     var startRot = -barAngleDeg * 6;
-    var radius = 400;
+    var radius = 384;
 
     function degreesToRads(degrees) {
         return Math.PI/180 * degrees;
@@ -63,8 +63,19 @@ var barManager = (function() {
             var ctx = canvas.ctx;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
-            ctx.translate(canvas.width/2, canvas.height + radius);
+            ctx.translate(canvas.width/2, radius);
             ctx.rotate(degreesToRads(startRot));
+
+            //Draw first tick seperately
+            ctx.strokeStyle = '#ff0000';
+            ctx.beginPath();
+            ctx.moveTo(canvas.xStart, -radius);
+            ctx.lineTo(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2));
+            //ctx.stroke();
+            ctx.arc(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2), 5,0, Math.PI*2, false);
+            ctx.stroke();
+            ctx.closePath();
+            ctx.rotate(degreesToRads(barAngleDeg));
 
             ctx.strokeStyle = offColour;
             for(var i=0; i<canvas.numBars; ++i) {
@@ -73,8 +84,8 @@ var barManager = (function() {
                 }
                 ctx.beginPath();
                 //gap = i*canvas.interGap;
-                ctx.moveTo(canvas.xStart, canvas.yStart - radius);
-                ctx.lineTo(canvas.xStart, canvas.yStart  - radius + canvas.barLength);
+                ctx.moveTo(canvas.xStart, -radius);
+                ctx.lineTo(canvas.xStart, -radius + canvas.barLength);
                 ctx.stroke();
                 ctx.closePath();
                 ctx.rotate(degreesToRads(barAngleDeg));

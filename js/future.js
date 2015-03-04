@@ -190,6 +190,7 @@ Future.prototype.createScene = function() {
         this.root.add(sphereMesh);
     }
 
+    /*
     this.modelLoader.load( 'models/newBrain.obj', function ( object ) {
 
         _this.root.add( object );
@@ -203,29 +204,36 @@ Future.prototype.createScene = function() {
             }
         })
     } );
+    */
+    //DEBUG
+    var sphereGeom = new THREE.SphereGeometry(100, 32, 32);
+    var sphereMat = new THREE.MeshBasicMaterial( {color: 0x0000ff});
+    var sphere = new THREE.Mesh(sphereGeom, sphereMat);
+    this.scene.add(sphere);
 
     //Create canvas for each power meter
     var pos = [
-                1, 40,
-                3.7, 31,
-                3.8, 49,
-                17, 10,
-                17, 65,
-                29, 10,
-                29, 65,
-                41, 10,
-                41, 65,
-                53, 10,
-                53, 65,
-                65, 10,
-                65, 65,
-                77, 10,
-                77, 65,
-                89, 10,
-                89, 65,
-                95, 40
+                0, 35.4,     //AF3
+                81, 35.4, //F7
+                38, 72.4,    //F3
+                20.5, 13,     //FC5
+                6, 19,     //T7
+                -4.75, 29,     //P7
+                0, 65,     //01
+                0, 10,     //02
+                0, 65,     //P8
+                0, 10,     //T8
+                0, 65,     //FC6
+                0, 10,     //F4
+                0, 65,     //F8
+                0, 10,     //AF4
+                0, 65,     //EXCITE
+                0, 10,     //MEDIT
+                0, 65,     //FRUST
+                0, 40      //BORED
     ];
-    var rot = [ 0, -20, 20, -40, 40, -60, 60, -80, 80, -100, 100, -120, 120, -140, 140, -160, 160, 180];
+    //Rotation order as for positions
+    var rot = [ 0, -180, 90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
     var p;
     for(i=0,p=0; i<NUM_DIVISIONS; ++i, p+=2) {
         canvasManager.createCanvas('meter'+i, pos[p], pos[p+1], rot[i]);
@@ -406,7 +414,7 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
-            for(i=0; i<brainData.getNumZones(); ++i) {
+            for(i=0; i<3; ++i) {
                 barManager.drawBars(i, this.spriteMats[i].opacity);
             }
         }

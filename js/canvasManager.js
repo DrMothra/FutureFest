@@ -8,7 +8,7 @@ var canvasManager = (function() {
     var canvasList = [];
     var canvas;
     var width = 300;
-    var height = 120;
+    var height = 140;
     var posStyle = 'fixed';
 
     return {
