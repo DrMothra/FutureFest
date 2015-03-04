@@ -213,9 +213,9 @@ Future.prototype.createScene = function() {
 
     //Create canvas for each power meter
     var pos = [
-                0, 35.4,     //AF3
+                0.5, 35.4,     //AF3
                 81, 35.4, //F7
-                38, 72.4,    //F3
+                40.9, 65,    //F3
                 20.5, 13,     //FC5
                 6, 19,     //T7
                 -4.75, 29,     //P7
@@ -239,6 +239,9 @@ Future.prototype.createScene = function() {
         canvasManager.createCanvas('meter'+i, pos[p], pos[p+1], rot[i]);
         barManager.createBars('meter'+i);
     }
+    //DEBUG
+    var elem = $('#meter2');
+    console.log("Element =", elem[0].offsetTop, " ", elem[0].offsetLeft);
 };
 
 Future.prototype.createGUI = function() {
