@@ -211,37 +211,124 @@ Future.prototype.createScene = function() {
     var sphere = new THREE.Mesh(sphereGeom, sphereMat);
     this.scene.add(sphere);
 
+    //Create positions for any width/height
+    function degreesToRads(degrees) {
+        return Math.PI/180 * degrees;
+    }
+    var angles = {};
+    angles.sin20 = Math.sin(degreesToRads(20));
+    angles.cos20 = Math.cos(degreesToRads(20));
+    angles.sin40 = Math.sin(degreesToRads(40));
+    angles.cos40 = Math.cos(degreesToRads(40));
+    angles.sin60 = Math.sin(degreesToRads(60));
+    angles.cos60 = Math.cos(degreesToRads(60));
+    angles.sin80 = Math.sin(degreesToRads(80));
+    angles.cos80 = Math.cos(degreesToRads(80));
+
+    var halfCanvasWidth = 65;
+    var halfCanvasHeight = 50;
+    var screenWidth = window.innerWidth;
+    var screenHeight = window.innerHeight;
+    var radius = screenHeight/2;
+    var effectiveRadius = radius - halfCanvasHeight;
+    var pos = [];
+    for(var i=0; i<NUM_DIVISIONS; ++i) {
+        var coords = {};
+        coords.top = coords.left = 0;
+        pos.push(coords);
+    }
+
+    pos[0].top = (((effectiveRadius * angles.sin40) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[0].left = (screenWidth/2 - ((effectiveRadius * angles.cos40) + halfCanvasWidth)) / screenWidth;
+
+    pos[1].top = (((effectiveRadius * angles.sin20) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[1].left = (screenWidth/2 - ((effectiveRadius * angles.cos20) + halfCanvasWidth)) / screenWidth;
+
+    pos[2].top = (screenHeight/2 - halfCanvasHeight) / screenHeight;
+    pos[2].left = (screenWidth/2 - (effectiveRadius + halfCanvasWidth)) / screenWidth;
+
+    pos[3].top = (screenHeight/2 - ((effectiveRadius * angles.sin20) + halfCanvasHeight)) / screenHeight;
+    pos[3].left = (screenWidth/2 - ((effectiveRadius * angles.cos20) + halfCanvasWidth)) / screenWidth;
+
+    pos[4].top = (screenHeight/2 - ((effectiveRadius * angles.sin40) + halfCanvasHeight)) / screenHeight;
+    pos[4].left = (screenWidth/2 - ((effectiveRadius * angles.cos40) + halfCanvasWidth)) / screenWidth;
+
+    pos[5].top = (screenHeight/2 - ((effectiveRadius * angles.sin60) + halfCanvasHeight)) / screenHeight;
+    pos[5].left = (screenWidth/2 - ((effectiveRadius * angles.cos60) + halfCanvasWidth)) / screenWidth;
+
+    pos[6].top = (screenHeight/2 - ((effectiveRadius * angles.sin80) + halfCanvasHeight)) / screenHeight;
+    pos[6].left = (screenWidth/2 - ((effectiveRadius * angles.cos80) + halfCanvasWidth)) / screenWidth;
+
+    pos[7].top = pos[6].top;
+    pos[7].left = (((effectiveRadius * angles.cos80) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+
+    pos[8].top = pos[5].top;
+    pos[8].left = (((effectiveRadius * angles.cos60) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+
+    pos[9].top = pos[4].top;
+    pos[9].left = (((effectiveRadius * angles.cos40) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+
+    pos[10].top = pos[3].top;
+    pos[10].left = (((effectiveRadius * angles.cos20) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+
+    pos[11].top = pos[2].top;
+    pos[11].left = (effectiveRadius - halfCanvasWidth + screenWidth/2) / screenWidth;
+
+    pos[12].top = pos[1].top;
+    pos[12].left = pos[10].left;
+
+    pos[13].top = pos[0].top;
+    pos[13].left = pos[9].left;
+
+    pos[14].top = (((effectiveRadius * angles.sin60) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[14].left = pos[8].left;
+
+    pos[15].top = (((effectiveRadius * angles.sin80) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[15].left = pos[7].left;
+
+    pos[16].top = pos[15].top;
+    pos[16].left = pos[6].left;
+
+    pos[17].top = pos[14].top;
+    pos[17].left = pos[5].left;
+
+    //Convert to percentages
+    for(var i=0; i<pos.length; ++i) {
+        pos[i].top *= 100;
+        pos[i].left *= 100;
+    }
+
     //Create canvas for each power meter
+    /*
     var pos = [
                 71.4, 18.7,     //AF3
-                58.4, 13, //F7
-                43.5, 11,    //F3
-                28.6, 13,     //FC5
+                58.4, 13,       //F7
+                43.5, 11,       //F3
+                28.6, 13,       //FC5
                 15.5, 18.7,     //T7
-                5.8, 27.3,     //P7
-                0.6, 38,     //01
-                0.6, 49.3,     //02
-                5.8, 60,     //P8
+                5.8, 27.3,      //P7
+                0.6, 38,        //01
+                0.6, 49.3,      //02
+                5.8, 60,        //P8
                 15.5, 68.6,     //T8
                 28.6, 74.3,     //FC6
                 43.5, 76.3,     //F4
                 58.4, 74.3,     //F8
                 71.4, 68.6,     //AF4
-                81.1, 60,     //EXCITE
+                81.1, 60,       //EXCITE
                 86.3, 49.3,     //MEDIT
-                86.3, 38,     //FRUST
+                86.3, 38,       //FRUST
                 81.1, 27.3      //BORED
     ];
+    */
+
     //Rotation order as for positions
     var rot = [ -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
     var p;
-    for(i=0,p=0; i<NUM_DIVISIONS; ++i, p+=2) {
-        canvasManager.createCanvas('meter'+i, pos[p], pos[p+1], rot[i]);
+    for(i=0; i<NUM_DIVISIONS; ++i) {
+        canvasManager.createCanvas('meter'+i, pos[i].top, pos[i].left, rot[i]);
         barManager.createBars('meter'+i);
     }
-    //DEBUG
-    var elem = $('#meter2');
-    console.log("Element =", elem[0].offsetTop, " ", elem[0].offsetLeft);
 };
 
 Future.prototype.createGUI = function() {
@@ -385,7 +472,13 @@ Future.prototype.update = function() {
         for(mats=0; mats<this.spriteMats.length; ++mats) {
             this.spriteMats[mats].opacity = (Math.sin(this.glowTime)/2.0) + 0.5;
         }
-
+        for(i=0; i<14; ++i) {
+            barManager.drawBars(i, this.spriteMats[i].opacity);
+        }
+        //DEBUG
+        for(i=14; i<18; ++i) {
+            barManager.drawBars(i, 0.5);
+        }
     }
 
     if(this.guiControls.NeuroData) {
