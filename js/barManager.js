@@ -13,7 +13,7 @@ var barManager = (function() {
     var lineLength = 70;
     var lineWidth = 5;
     var barAngleDeg = 1.667;
-    var startRot = -barAngleDeg * 6;
+    var startRot = -barAngleDeg * 5.5;
     var radius = 384;
 
     function degreesToRads(degrees) {

@@ -7,14 +7,14 @@ var canvasManager = (function() {
 
     var canvasList = [];
     var canvas;
-    var width = 300;
-    var height = 140;
+    var width = 130;
+    var height = 100;
     var posStyle = 'fixed';
 
     return {
         createCanvas: function(id, top, left, rotate) {
             canvas = document.createElement('canvas');
-            canvas.style.transform = 'rotate(' + rotate + 'deg)';
+            canvas.style.webkitTransform = 'rotate(' + rotate + 'deg)';
             canvas.id = id;
             canvas.width = width;
             canvas.height = height;

@@ -213,27 +213,27 @@ Future.prototype.createScene = function() {
 
     //Create canvas for each power meter
     var pos = [
-                0.5, 35.4,     //AF3
-                81, 35.4, //F7
-                40.9, 65,    //F3
-                20.5, 13,     //FC5
-                6, 19,     //T7
-                -4.75, 29,     //P7
-                0, 65,     //01
-                0, 10,     //02
-                0, 65,     //P8
-                0, 10,     //T8
-                0, 65,     //FC6
-                0, 10,     //F4
-                0, 65,     //F8
-                0, 10,     //AF4
-                0, 65,     //EXCITE
-                0, 10,     //MEDIT
-                0, 65,     //FRUST
-                0, 40      //BORED
+                71.4, 18.7,     //AF3
+                58.4, 13, //F7
+                43.5, 11,    //F3
+                28.6, 13,     //FC5
+                15.5, 18.7,     //T7
+                5.8, 27.3,     //P7
+                0.6, 38,     //01
+                0.6, 49.3,     //02
+                5.8, 60,     //P8
+                15.5, 68.6,     //T8
+                28.6, 74.3,     //FC6
+                43.5, 76.3,     //F4
+                58.4, 74.3,     //F8
+                71.4, 68.6,     //AF4
+                81.1, 60,     //EXCITE
+                86.3, 49.3,     //MEDIT
+                86.3, 38,     //FRUST
+                81.1, 27.3      //BORED
     ];
     //Rotation order as for positions
-    var rot = [ 0, -180, 90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
+    var rot = [ -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
     var p;
     for(i=0,p=0; i<NUM_DIVISIONS; ++i, p+=2) {
         canvasManager.createCanvas('meter'+i, pos[p], pos[p+1], rot[i]);
@@ -417,8 +417,12 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
-            for(i=0; i<3; ++i) {
+            for(i=0; i<14; ++i) {
                 barManager.drawBars(i, this.spriteMats[i].opacity);
+            }
+            //DEBUG
+            for(i=14; i<18; ++i) {
+                barManager.drawBars(i, 0.5);
             }
         }
     }
