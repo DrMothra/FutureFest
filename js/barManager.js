@@ -77,9 +77,9 @@ var barManager = (function() {
             ctx.closePath();
             ctx.rotate(degreesToRads(barAngleDeg));
 
-            ctx.strokeStyle = offColour;
             for(var i=0; i<canvas.numBars; ++i) {
-                if(i >= level) {
+                ctx.strokeStyle = offColour;
+                if(level >= i) {
                     ctx.strokeStyle = onColour;
                 }
                 ctx.beginPath();
