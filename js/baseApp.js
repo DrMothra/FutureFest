@@ -38,10 +38,12 @@ BaseApp.prototype.createRenderer = function() {
     this.renderer = new THREE.WebGLRenderer( {antialias : true});
     this.renderer.setClearColor(0x000000, 1.0);
     this.renderer.shadowMapEnabled = true;
-    var isMSIE = /*@cc_on!@*/0;
+    //See if using IE
+    var ua = window.navigator.userAgent;
+    this.isIE = ua.indexOf("Trident") >= 0 || ua.indexOf("MSIE") >=0;
 
     var width = this.container.clientWidth;
-    if (isMSIE) {
+    if (this.isIE) {
         // do IE-specific things
         width = window.innerWidth;
     }

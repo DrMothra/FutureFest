@@ -27,7 +27,10 @@ var canvasManager = (function() {
 
         createCanvas: function(id, top, left, rotate) {
             canvas = document.createElement('canvas');
+            canvas.style.transform = 'rotate(' + rotate + 'deg)';
             canvas.style.webkitTransform = 'rotate(' + rotate + 'deg)';
+            canvas.style.mozTransform = 'rotate(' + rotate + 'deg)';
+            canvas.style.msTransform = 'rotate(' + rotate + 'deg)';
             canvas.id = id;
             canvas.width = currentWidth;
             canvas.height = currentHeight;

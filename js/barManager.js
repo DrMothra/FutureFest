@@ -15,6 +15,7 @@ var barManager = (function() {
     var barAngleDeg = 1.667;
     var startRot = -barAngleDeg * 5.5;
     var radius = 384;
+    var textXOffset = 10;
 
     function degreesToRads(degrees) {
         return Math.PI/180 * degrees;
@@ -51,7 +52,7 @@ var barManager = (function() {
             return true;
         },
 
-        drawBars: function(barNumber, level) {
+        drawBars: function(barNumber, level, text) {
             if(barNumber >= canvasList.length) {
                 displayError("Invalid canvas number");
                 return;
@@ -61,8 +62,12 @@ var barManager = (function() {
 
             var canvas = canvasList[barNumber];
             var ctx = canvas.ctx;
+            //Text styles
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#ffffff';
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
+
             ctx.translate(canvas.width/2, radius);
             ctx.rotate(degreesToRads(startRot));
 
@@ -74,6 +79,16 @@ var barManager = (function() {
             //ctx.stroke();
             ctx.arc(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2), 5,0, Math.PI*2, false);
             ctx.stroke();
+            //Draw text seperately
+            if(text.length >= 4) {
+                ctx.save();
+                ctx.rotate(degreesToRads(barAngleDeg*3.5));
+                ctx.fillText(text, canvas.xStart-20, -radius + canvas.barLength + (canvas.barLength *0.2));
+                ctx.restore();
+            } else {
+                ctx.fillText(text, canvas.xStart + textXOffset, -radius + canvas.barLength + (canvas.barLength *0.2));
+            }
+
             ctx.closePath();
             ctx.rotate(degreesToRads(barAngleDeg));
 

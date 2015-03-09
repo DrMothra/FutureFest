@@ -5,7 +5,7 @@
 
 var brainData = (function() {
     //Brain zones
-    var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4'];
+    var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED'];
 
     var brainTextData = [];
     var brainRecord = {};
@@ -67,6 +67,7 @@ Future.prototype.init = function(container) {
     this.rotInc = 0.002;
     this.glowTime = 0;
     this.delta = 0;
+    this.data = {};
     this.dataTime = 0;
     this.brainModel = null;
     this.currentAlphaState = DOWN;
@@ -75,10 +76,16 @@ Future.prototype.init = function(container) {
     this.startUpCheck = true;
 
     //Subscribe to pubnub
+    //Don't use pubnub for now
+    /*
     this.channel = PubNubBuffer.subscribe("mayhempaul",
         "sub-c-2eafcf66-c636-11e3-8dcd-02ee2ddab7fe",
         1000,
         300);
+    */
+
+    //Connect to server
+    connectionManager.connect();
 
     BaseApp.prototype.init.call(this, container);
 
@@ -237,6 +244,7 @@ Future.prototype.createScene = function() {
 
     //Rotation order as for positions
     var rot = [ -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
+
     for(i=0; i<NUM_DIVISIONS; ++i) {
         canvasManager.createCanvas('meter'+i, pos[i].top, pos[i].left, rot[i]);
         barManager.createBars('meter'+i);
@@ -388,16 +396,21 @@ Future.prototype.update = function() {
     this.delta = this.clock.getDelta();
     var mats = null, i;
 
+    this.data = connectionManager.getData();
+    if(this.data != null) {
+        console.log("Got data", this.data.channelnames);
+    }
+
     if(this.guiControls.SinewaveData) {
         for(mats=0; mats<this.spriteMats.length; ++mats) {
             this.spriteMats[mats].opacity = (Math.sin(this.glowTime)/2.0) + 0.5;
         }
         for(i=0; i<14; ++i) {
-            barManager.drawBars(i, this.spriteMats[i].opacity);
+            barManager.drawBars(i, this.spriteMats[i].opacity, brainData.getZoneName(i));
         }
         //DEBUG
         for(i=14; i<18; ++i) {
-            barManager.drawBars(i, 0.5);
+            barManager.drawBars(i, 0.5, brainData.getZoneName(i));
         }
     }
 
@@ -431,11 +444,11 @@ Future.prototype.update = function() {
                 this.spriteMats[mats].opacity = Math.random();
             }
             for(i=0; i<14; ++i) {
-                barManager.drawBars(i, this.spriteMats[i].opacity);
+                barManager.drawBars(i, this.spriteMats[i].opacity, brainData.getZoneName(i));
             }
             //DEBUG
             for(i=14; i<18; ++i) {
-                barManager.drawBars(i, 0.5);
+                barManager.drawBars(i, 0.5, brainData.getZoneName(i));
             }
         }
     }
@@ -485,6 +498,10 @@ Future.prototype.update = function() {
     //Rotate brain model
     if(this.loadedModel) {
         this.root.rotation.y += this.rotInc;
+    }
+
+    if(connectionManager.getConnectionStatus()) {
+        connectionManager.requestData();
     }
 
     BaseApp.prototype.update.call(this);
