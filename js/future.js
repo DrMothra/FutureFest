@@ -67,7 +67,8 @@ Future.prototype.init = function(container) {
     this.rotInc = 0.002;
     this.glowTime = 0;
     this.delta = 0;
-    this.data = {};
+    this.data = null;
+    this.dataValues = null;
     this.dataTime = 0;
     this.brainModel = null;
     this.currentAlphaState = DOWN;
@@ -260,7 +261,7 @@ Future.prototype.createGUI = function() {
         this.GlowOpacity = 0.7;
         this.RotateSpeed = 0.002;
         this.SinewaveData = false;
-        this.RandomData = true;
+        this.RandomData = false;
         this.NeuroData = false;
         this.TestSphere = false;
         //Light Pos
@@ -397,8 +398,15 @@ Future.prototype.update = function() {
     var mats = null, i;
 
     this.data = connectionManager.getData();
-    if(this.data != null) {
-        console.log("Got data", this.data.channelnames);
+    if(this.data != null && this.data != 'No Data') {
+        this.data = JSON.parse(this.data);
+        this.dataValues = this.data.data[0][1];
+        //Ignore first 2 values
+        for(i=0; i<NUM_DIVISIONS; ++i) {
+            barManager.drawBars(i, this.dataValues[i+2], brainData.getZoneName(i));
+            //DEBUG
+            console.log("Data values ", i, this.dataValues[i+2]);
+        }
     }
 
     if(this.guiControls.SinewaveData) {
