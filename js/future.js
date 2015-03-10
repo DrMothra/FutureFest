@@ -5,7 +5,8 @@
 
 var brainData = (function() {
     //Brain zones
-    var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED', 'TYPE', 'INTENSITY'];
+    //var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED', 'TYPE', 'INTENSITY'];
+    var brainZones = ['TYPE', 'INTENSITY', 'BORED', 'EXCITE-S', 'MEDIT', 'FRUST', 'AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4'];
 
     var brainTextData = [];
     var brainRecord = {};
@@ -259,9 +260,11 @@ Future.prototype.createScene = function() {
     var pos = createLayout();
 
     //Rotation order as for positions
-    var rot = [ -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
+    //Bored, excite, med, frust, AF3, etc.
+    //var rot = [ -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130, 150, 170, -170, -150];
+    var rot = [ 150, 170, -170, -150, -130, -110, -90, -70, -50, -30, -10, 10, 30, 50, 70, 90, 110, 130];
 
-    for(i=0; i<NUM_DIVISIONS; ++i) {
+    for(i=0; i<brainData.getNumZones()-2; ++i) {
         canvasManager.createCanvas('meter'+i, pos[i].top, pos[i].left, rot[i]);
         barManager.createBars('meter'+i);
     }
@@ -277,7 +280,7 @@ Future.prototype.createGUI = function() {
         this.RotateSpeed = 0.002;
         this.SinewaveData = false;
         this.RandomData = false;
-        this.NeuroData = false;
+        this.NeuroData = true;
         this.TestSphere = false;
         //Light Pos
         this.LightX = 200;
@@ -412,18 +415,20 @@ Future.prototype.update = function() {
     this.delta = this.clock.getDelta();
     var mats = null, i;
 
-    this.data = connectionManager.getData();
-    if(this.data != null && this.data != 'No Data') {
-        this.data = JSON.parse(this.data);
-        this.dataValues = this.data.data[0][1];
-        //Normalise these values
-        this.normaliseData(this.dataValues);
-        //Ignore first 2 values
-        for(i=0; i<brainData.getNumZones()-2; ++i) {
-            barManager.drawBars(i, this.normalValues[i+2], brainData.getZoneName(i));
-        }
-        for(mats=0; mats<this.spriteMats.length; ++mats) {
-            this.spriteMats[mats].opacity = this.normalValues[mats+2];
+    if(this.guiControls.NeuroData) {
+        this.data = connectionManager.getData();
+        if(this.data != null && this.data != 'No Data') {
+            this.data = JSON.parse(this.data);
+            this.dataValues = this.data.data[0][1];
+            //Normalise these values
+            this.normaliseData(this.dataValues);
+            //Ignore first 2 values
+            for(i=0; i<brainData.getNumZones()-2; ++i) {
+                barManager.drawBars(i, this.normalValues[i+2], brainData.getZoneName(i+2));
+            }
+            for(mats=0; mats<this.spriteMats.length; ++mats) {
+                this.spriteMats[mats].opacity = this.normalValues[mats+6];
+            }
         }
     }
 
@@ -440,6 +445,7 @@ Future.prototype.update = function() {
         }
     }
 
+    /*
     if(this.guiControls.NeuroData) {
         if(this.startUpCheck) {
             this.brainTime += this.delta;
@@ -461,6 +467,7 @@ Future.prototype.update = function() {
             }
         }
     }
+    */
 
     if(this.guiControls.RandomData) {
         this.dataTime += this.delta;
@@ -579,7 +586,7 @@ Future.prototype.normaliseData = function(data) {
 Future.prototype.windowResize = function() {
     //Redraw layout
     var pos = createLayout();
-    for(var i=0; i<NUM_DIVISIONS; ++i) {
+    for(var i=0; i<brainData.getNumZones()-2; ++i) {
         canvasManager.drawCanvas(i, pos[i].top, pos[i].left);
     }
     BaseApp.prototype.windowResize.call(this);
@@ -596,65 +603,65 @@ function createLayout() {
     var radius = screenHeight/2;
     var effectiveRadius = radius - halfCanvasHeight;
     var pos = [];
-    for(var i=0; i<NUM_DIVISIONS; ++i) {
+    for(var i=0; i<brainData.getNumZones()-2; ++i) {
         var coords = {};
         coords.top = coords.left = 0;
         pos.push(coords);
     }
 
-    pos[0].top = (((effectiveRadius * angles.sin40) - halfCanvasHeight) + screenHeight/2) / screenHeight;
-    pos[0].left = (screenWidth/2 - ((effectiveRadius * angles.cos40) + halfCanvasWidth)) / screenWidth;
+    pos[0].top = (((effectiveRadius * angles.sin60) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[0].left = (((effectiveRadius * angles.cos60) - halfCanvasWidth) + screenWidth/2) / screenWidth;
 
-    pos[1].top = (((effectiveRadius * angles.sin20) - halfCanvasHeight) + screenHeight/2) / screenHeight;
-    pos[1].left = (screenWidth/2 - ((effectiveRadius * angles.cos20) + halfCanvasWidth)) / screenWidth;
+    pos[1].top = (((effectiveRadius * angles.sin80) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[1].left = (((effectiveRadius * angles.cos80) - halfCanvasWidth) + screenWidth/2) / screenWidth;
 
-    pos[2].top = (screenHeight/2 - halfCanvasHeight) / screenHeight;
-    pos[2].left = (screenWidth/2 - (effectiveRadius + halfCanvasWidth)) / screenWidth;
+    pos[2].top = pos[1].top;
+    pos[2].left = (screenWidth/2 - ((effectiveRadius * angles.cos80) + halfCanvasWidth)) / screenWidth;
 
-    pos[3].top = (screenHeight/2 - ((effectiveRadius * angles.sin20) + halfCanvasHeight)) / screenHeight;
-    pos[3].left = (screenWidth/2 - ((effectiveRadius * angles.cos20) + halfCanvasWidth)) / screenWidth;
+    pos[3].top = pos[0].top;
+    pos[3].left = (screenWidth/2 - ((effectiveRadius * angles.cos60) + halfCanvasWidth)) / screenWidth;
 
-    pos[4].top = (screenHeight/2 - ((effectiveRadius * angles.sin40) + halfCanvasHeight)) / screenHeight;
+    pos[4].top = (((effectiveRadius * angles.sin40) - halfCanvasHeight) + screenHeight/2) / screenHeight;
     pos[4].left = (screenWidth/2 - ((effectiveRadius * angles.cos40) + halfCanvasWidth)) / screenWidth;
 
-    pos[5].top = (screenHeight/2 - ((effectiveRadius * angles.sin60) + halfCanvasHeight)) / screenHeight;
-    pos[5].left = (screenWidth/2 - ((effectiveRadius * angles.cos60) + halfCanvasWidth)) / screenWidth;
+    pos[5].top = (((effectiveRadius * angles.sin20) - halfCanvasHeight) + screenHeight/2) / screenHeight;
+    pos[5].left = (screenWidth/2 - ((effectiveRadius * angles.cos20) + halfCanvasWidth)) / screenWidth;
 
-    pos[6].top = (screenHeight/2 - ((effectiveRadius * angles.sin80) + halfCanvasHeight)) / screenHeight;
-    pos[6].left = (screenWidth/2 - ((effectiveRadius * angles.cos80) + halfCanvasWidth)) / screenWidth;
+    pos[6].top = (screenHeight/2 - halfCanvasHeight) / screenHeight;
+    pos[6].left = (screenWidth/2 - (effectiveRadius + halfCanvasWidth)) / screenWidth;
 
-    pos[7].top = pos[6].top;
-    pos[7].left = (((effectiveRadius * angles.cos80) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+    pos[7].top = (screenHeight/2 - ((effectiveRadius * angles.sin20) + halfCanvasHeight)) / screenHeight;
+    pos[7].left = pos[5].left;
 
-    pos[8].top = pos[5].top;
-    pos[8].left = (((effectiveRadius * angles.cos60) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+    pos[8].top = (screenHeight/2 - ((effectiveRadius * angles.sin40) + halfCanvasHeight)) / screenHeight;
+    pos[8].left = pos[4].left;
 
-    pos[9].top = pos[4].top;
-    pos[9].left = (((effectiveRadius * angles.cos40) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+    pos[9].top = (screenHeight/2 - ((effectiveRadius * angles.sin60) + halfCanvasHeight)) / screenHeight;
+    pos[9].left = pos[3].left;
 
-    pos[10].top = pos[3].top;
-    pos[10].left = (((effectiveRadius * angles.cos20) - halfCanvasWidth) + screenWidth/2) / screenWidth;
+    pos[10].top = (screenHeight/2 - ((effectiveRadius * angles.sin80) + halfCanvasHeight)) / screenHeight;
+    pos[10].left = pos[2].left;
 
-    pos[11].top = pos[2].top;
-    pos[11].left = (effectiveRadius - halfCanvasWidth + screenWidth/2) / screenWidth;
+    pos[11].top = pos[10].top;
+    pos[11].left = pos[1].left;
 
-    pos[12].top = pos[1].top;
-    pos[12].left = pos[10].left;
+    pos[12].top = pos[9].top;
+    pos[12].left = pos[0].left;
 
-    pos[13].top = pos[0].top;
-    pos[13].left = pos[9].left;
+    pos[13].top = pos[8].top;
+    pos[13].left = (((effectiveRadius * angles.cos40) - halfCanvasWidth) + screenWidth/2) / screenWidth;
 
-    pos[14].top = (((effectiveRadius * angles.sin60) - halfCanvasHeight) + screenHeight/2) / screenHeight;
-    pos[14].left = pos[8].left;
+    pos[14].top = pos[7].top;
+    pos[14].left = (((effectiveRadius * angles.cos20) - halfCanvasWidth) + screenWidth/2) / screenWidth;
 
-    pos[15].top = (((effectiveRadius * angles.sin80) - halfCanvasHeight) + screenHeight/2) / screenHeight;
-    pos[15].left = pos[7].left;
+    pos[15].top = pos[6].top;
+    pos[15].left = (effectiveRadius - halfCanvasWidth + screenWidth/2) / screenWidth;
 
-    pos[16].top = pos[15].top;
-    pos[16].left = pos[6].left;
+    pos[16].top = pos[5].top;
+    pos[16].left = pos[14].left;
 
-    pos[17].top = pos[14].top;
-    pos[17].left = pos[5].left;
+    pos[17].top = pos[4].top;
+    pos[17].left = (((effectiveRadius * angles.cos40) - halfCanvasWidth) + screenWidth/2) / screenWidth;
 
     //Convert to percentages
     for(var i=0; i<pos.length; ++i) {
