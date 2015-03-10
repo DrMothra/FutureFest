@@ -53,13 +53,8 @@ var connectionManager = (function() {
         },
 
         connect: function(statusHandler, connectHandler) {
-            currentStatusHandler = (statusHandler != 'undefined') ? statusHandler : defaultStatusHandler;
-            currentConnectHandler = defaultConnectHandler;
-            /*
-            if(connectHandler != "undefined") {
-                currentConnectHandler = connectHandler;
-            }
-            */
+            currentStatusHandler = (statusHandler != undefined) ? statusHandler : defaultStatusHandler;
+            currentConnectHandler = (connectHandler != undefined) ? connectHandler : defaultConnectHandler;
 
             socket = new WebSocket(currentURL);
             socket.onopen = function() {

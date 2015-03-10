@@ -5,7 +5,7 @@
 
 var brainData = (function() {
     //Brain zones
-    var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED'];
+    var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED', 'TYPE', 'INTENSITY'];
 
     var brainTextData = [];
     var brainRecord = {};
@@ -40,6 +40,8 @@ var ALPHA_STEADY_TIME = 10;
 var DOWN=0, OFF=1, UP=2, ON=3;
 
 var NUM_DIVISIONS = 18;
+var MILLION = 1000000;
+var NORMAL_SAMPLES = 100;
 
 var DEFAULT_CANVAS_WIDTH = 130, DEFAULT_CANVAS_HEIGHT = 100;
 function degreesToRads(degrees) {
@@ -69,6 +71,19 @@ Future.prototype.init = function(container) {
     this.delta = 0;
     this.data = null;
     this.dataValues = null;
+    this.normalValues = [];
+    this.dataBuffer = [];
+    this.minValues = [];
+    this.maxValues = [];
+    var channelBuffer;
+    for(var i=0; i<brainData.getNumZones(); ++i) {
+        this.minValues.push(MILLION);
+        this.maxValues.push(-MILLION);
+        this.normalValues.push(0);
+        channelBuffer = new Array(100);
+        this.dataBuffer.push(channelBuffer);
+    }
+    this.dataSamples = 0;
     this.dataTime = 0;
     this.brainModel = null;
     this.currentAlphaState = DOWN;
@@ -401,11 +416,14 @@ Future.prototype.update = function() {
     if(this.data != null && this.data != 'No Data') {
         this.data = JSON.parse(this.data);
         this.dataValues = this.data.data[0][1];
+        //Normalise these values
+        this.normaliseData(this.dataValues);
         //Ignore first 2 values
-        for(i=0; i<NUM_DIVISIONS; ++i) {
-            barManager.drawBars(i, this.dataValues[i+2], brainData.getZoneName(i));
-            //DEBUG
-            console.log("Data values ", i, this.dataValues[i+2]);
+        for(i=0; i<brainData.getNumZones()-2; ++i) {
+            barManager.drawBars(i, this.normalValues[i+2], brainData.getZoneName(i));
+        }
+        for(mats=0; mats<this.spriteMats.length; ++mats) {
+            this.spriteMats[mats].opacity = this.normalValues[mats+2];
         }
     }
 
@@ -513,6 +531,49 @@ Future.prototype.update = function() {
     }
 
     BaseApp.prototype.update.call(this);
+};
+
+Future.prototype.normaliseData = function(data) {
+    //Normalise the given data
+    //Re-normalise at regular intervals
+    var i, dataSize = data.length;
+
+    for(i=0; i<dataSize; ++i) {
+        this.dataBuffer[i][this.dataSamples] = data[i];
+    }
+
+    if(++this.dataSamples >= NORMAL_SAMPLES) {
+        //Wrap buffer
+        this.dataSamples = 0;
+        //Start getting max, min
+        for(i=0; i<dataSize; ++i) {
+            this.minValues[i] = Math.min.apply(null, this.dataBuffer[i]);
+            this.maxValues[i] = Math.max.apply(null, this.dataBuffer[i]);
+        }
+    }
+
+    for(i=0; i<dataSize; ++i) {
+        this.normalValues[i] = (data[i] - this.minValues[i])/(this.maxValues[i] - this.minValues[i]);
+    }
+
+    /*
+    if(++this.dataSamples >= ) {
+        this.dataSamples = 0;
+        for(i=0; i<brainData.getNumZones(); ++i) {
+            this.minValues[i] = MILLION;
+            this.maxValues[i] = -MILLION;
+        }
+    }
+
+    for(i=0; i<data.length; ++i) {
+        if(data[i] < this.minValues[i]) this.minValues[i] = data[i];
+        if(data[i] > this.maxValues[i]) this.maxValues[i] = data[i];
+
+        range = this.maxValues[i] - this.minValues[i];
+        if(range < 0.0001) range = this.maxValues[i];
+        this.normalValues[i] = (data[i] - this.minValues[i])/range;
+    }
+    */
 };
 
 Future.prototype.windowResize = function() {
