@@ -11,7 +11,7 @@ var connectionManager = (function() {
     var currentStatusHandler = null;
     var currentConnectHandler = null;
     var requestHandler = null;
-    var currentURL = "ws://127.0.0.1/";
+    var currentURL = "ws://128.243.22.234/";
     var socket;
 
     var defaultStatusHandler = function() {

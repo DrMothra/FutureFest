@@ -91,6 +91,7 @@ Future.prototype.init = function(container) {
     this.opacityTime = 0;
     this.brainTime = 0;
     this.startUpCheck = true;
+    this.loadedModel = null;
 
     //Subscribe to pubnub
     //Don't use pubnub for now
@@ -127,6 +128,7 @@ Future.prototype.createScene = function() {
         box.position.copy(light.position);
     }
 
+    box.visible = false;
     this.scene.add(box);
 
     //Root node
@@ -275,7 +277,7 @@ Future.prototype.createGUI = function() {
     this.guiControls = new function() {
         this.SphereSize = 0.5;
         this.BrainOpacity = 0.25;
-        this.CycleOpacity = false;
+        this.CycleOpacity = true;
         this.GlowOpacity = 0.7;
         this.RotateSpeed = 0.002;
         this.SinewaveData = false;
@@ -290,6 +292,9 @@ Future.prototype.createGUI = function() {
 
     //Create GUI
     this.gui = new dat.GUI();
+    //this.gui.close();
+    //Start GUI as hidden
+    dat.GUI.toggleHide();
 
     var _this = this;
     this.gui.add(this.guiControls, 'SphereSize', 0.1, 2).onChange(function(value) {
@@ -486,7 +491,7 @@ Future.prototype.update = function() {
         }
     }
 
-    if(this.guiControls.CycleOpacity) {
+    if(this.guiControls.CycleOpacity && this.loadedModel) {
         switch(this.currentAlphaState) {
             case DOWN:
                 if(this.opacityTime == 0) {
@@ -698,13 +703,21 @@ function createLayout() {
 
 $(document).ready(function() {
     //Initialise app
-    var container = document.getElementById("WebGL-output");
-    var app = new Future();
-    app.init(container);
-    app.createScene();
-    app.createGUI();
+    //See if supported
+    if(!Detector.webgl) {
+        $('#notSupported').show();
+    } else {
+        var container = document.getElementById("WebGL-output");
+        var app = new Future();
+        app.init(container);
+        app.createScene();
+        app.createGUI();
 
-    //GUI callbacks
+        //GUI callbacks
+        $(document).keydown(function (event) {
+            app.keydown(event);
+        });
 
-    app.run();
+        app.run();
+    }
 });

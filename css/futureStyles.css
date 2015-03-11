@@ -30,3 +30,20 @@ body {
     margin: 0;
     overflow: hidden;
 }
+#notSupported {
+    width:25%;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hide {
+    display: none;
+}
+.centred {
+    text-align: center;
+}
+.errorMessage {
+    margin-top: 20%;
+    padding: 2%;
+    border-radius: 15px;
+    background: #444444;
+}

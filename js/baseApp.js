@@ -66,27 +66,15 @@ BaseApp.prototype.createRenderer = function() {
     }, false);
 };
 
-/*
 BaseApp.prototype.keydown = function(event) {
     //Key press functionality
     switch(event.keyCode) {
-        case 83: //'S'
-            if (this.stats) {
-                if (this.statsShowing) {
-                    $("#Stats-output").hide();
-                    this.statsShowing = false;
-                } else {
-                    $("#Stats-output").show();
-                    this.statsShowing = true;
-                }
-            }
-            break;
         case 80: //'P'
             console.log('Cam =', this.camera.position);
             console.log('Look =', this.controls.getLookAt());
+            break;
     }
 };
-*/
 
 BaseApp.prototype.mouseClicked = function(event) {
     //Update mouse state
@@ -122,7 +110,7 @@ BaseApp.prototype.windowResize = function() {
 
     this.renderer.setSize( this.container.clientWidth, window.innerHeight);
     //DEBUG
-    console.log('Reize');
+    console.log('Resize');
 };
 
 BaseApp.prototype.createScene = function() {
@@ -155,7 +143,7 @@ BaseApp.prototype.createScene = function() {
 BaseApp.prototype.createCamera = function() {
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000 );
-    this.camera.position.set(0, 0, 600 );
+    this.camera.position.set(0, 0, 514 );
 
     console.log('dom =', this.renderer.domElement);
 };
