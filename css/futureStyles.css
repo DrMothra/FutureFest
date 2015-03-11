@@ -24,11 +24,22 @@ body {
     background: #000000;
     color: #285fff;
 }
-
+@font-face {
+    font-family: 'eurostileregular';
+    src: url('../fonts/eurostile-webfont.eot');
+    src: url('../fonts/eurostile-webfont.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/eurostile-webfont.woff2') format('woff2'),
+    url('../fonts/eurostile-webfont.woff') format('woff'),
+    url('../fonts/eurostile-webfont.ttf') format('truetype'),
+    url('../fonts/eurostile-webfont.svg#eurostileregular') format('svg');
+    font-weight: bold;
+    font-style: normal;
+}
 #WebGL-output {
     /* set margin to 0 and overflow to hidden, to go fullscreen */
     margin: 0;
     overflow: hidden;
+    font-family: 'eurostileregular';
 }
 #notSupported {
     width:25%;
@@ -47,3 +58,4 @@ body {
     border-radius: 15px;
     background: #444444;
 }
+

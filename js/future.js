@@ -441,12 +441,12 @@ Future.prototype.update = function() {
         for(mats=0; mats<this.spriteMats.length; ++mats) {
             this.spriteMats[mats].opacity = (Math.sin(this.glowTime)/2.0) + 0.5;
         }
-        for(i=0; i<14; ++i) {
-            barManager.drawBars(i, this.spriteMats[i].opacity, brainData.getZoneName(i));
+        for(i=0; i<brainData.getNumZones()-6; ++i) {
+            barManager.drawBars(i, this.spriteMats[i].opacity, brainData.getZoneName(i+2));
         }
         //DEBUG
-        for(i=14; i<18; ++i) {
-            barManager.drawBars(i, 0.5, brainData.getZoneName(i));
+        for(i=brainData.getNumZones()-6; i<brainData.getNumZones()-2; ++i) {
+            barManager.drawBars(i, (Math.sin(this.glowTime)/2.0) + 0.5, brainData.getZoneName(i+2));
         }
     }
 

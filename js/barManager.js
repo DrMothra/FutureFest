@@ -63,7 +63,9 @@ var barManager = (function() {
             var canvas = canvasList[barNumber];
             var ctx = canvas.ctx;
             //Text styles
-            ctx.font = '12px Arial';
+            ctx.fontFamily = '12px "eurostileregular"';
+            //ctx.fontFamily = '12px bold "Arial"';
+            //ctx.font = '12px Times';
             ctx.fillStyle = '#ffffff';
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
