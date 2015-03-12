@@ -8,13 +8,14 @@ var barManager = (function() {
     var canvasList = [];
     var offColour = '#646432';
     var onColour = '#ffff0d';
-    var numberBars = 11;
+    var numberBars = 216;//18 divisions of 12 bars
     var interGap = 20;
     var lineLength = 70;
     var lineWidth = 5;
     var barAngleDeg = 1.667;
-    var startRot = -barAngleDeg * 5.5;
+    var startRot = 0;
     var radius = 384;
+    var textLabels = [];
     var textXOffset = 10;
 
     function degreesToRads(degrees) {
@@ -57,7 +58,11 @@ var barManager = (function() {
             return true;
         },
 
-        drawBars: function(barNumber, level, text) {
+        setTextDescription: function(text) {
+            textLabels = text;
+        },
+
+        drawBars: function(barNumber, level) {
             if(barNumber >= canvasList.length) {
                 displayError("Invalid canvas number");
                 return;
@@ -65,48 +70,53 @@ var barManager = (function() {
             //DEBUG
             level *= 10;
 
+            var i;
             var canvas = canvasList[barNumber];
             var ctx = canvas.ctx;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
 
             ctx.translate(canvas.width/2, radius);
-            ctx.rotate(degreesToRads(startRot));
 
-            //Draw first tick seperately
-            ctx.strokeStyle = '#ff0000';
-            ctx.beginPath();
-            ctx.moveTo(canvas.xStart, -radius);
-            ctx.lineTo(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2));
-            //ctx.stroke();
-            ctx.arc(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2), 5,0, Math.PI*2, false);
-            ctx.stroke();
-            //Draw text seperately
-            if(text.length >= 4) {
-                ctx.save();
-                ctx.rotate(degreesToRads(barAngleDeg*3.5));
-                ctx.fillText(text, canvas.xStart-20, -radius + canvas.barLength + (canvas.barLength *0.2));
-                ctx.restore();
-            } else {
-                ctx.fillText(text, canvas.xStart + textXOffset, -radius + canvas.barLength + (canvas.barLength *0.2));
-            }
-
-            ctx.closePath();
-            ctx.rotate(degreesToRads(barAngleDeg));
-
-            for(var i=0; i<canvas.numBars; ++i) {
-                ctx.strokeStyle = offColour;
-                if(level >= i) {
-                    ctx.strokeStyle = onColour;
+            //Draw main ticks separately
+            var textDescriptor = 2;
+            for(i=0; i<canvas.numBars; ++i) {
+                if(i%12 === 0) {
+                    ctx.strokeStyle = '#ff0000';
+                    ctx.beginPath();
+                    ctx.moveTo(canvas.xStart, -radius);
+                    ctx.lineTo(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2));
+                    //ctx.stroke();
+                    ctx.arc(canvas.xStart, -radius + canvas.barLength + (canvas.barLength *0.2), 5,0, Math.PI*2, false);
+                    ctx.stroke();
+                    //Draw text seperately
+                    if(textLabels[textDescriptor].length >= 4) {
+                        ctx.save();
+                        ctx.rotate(degreesToRads(barAngleDeg*3.5));
+                        ctx.fillText(textLabels[textDescriptor], canvas.xStart-20, -radius + canvas.barLength + (canvas.barLength *0.2));
+                        ctx.restore();
+                    } else {
+                        ctx.fillText(textLabels[textDescriptor], canvas.xStart + textXOffset, -radius + canvas.barLength + (canvas.barLength *0.2));
+                    }
+                    ++textDescriptor;
+                    ctx.closePath();
+                } else {
+                    ctx.strokeStyle = offColour;
+                    /*
+                    if(level >= i) {
+                        ctx.strokeStyle = onColour;
+                    }
+                    */
+                    ctx.beginPath();
+                    //gap = i*canvas.interGap;
+                    ctx.moveTo(canvas.xStart, -radius);
+                    ctx.lineTo(canvas.xStart, -radius + canvas.barLength);
+                    ctx.stroke();
+                    ctx.closePath();
                 }
-                ctx.beginPath();
-                //gap = i*canvas.interGap;
-                ctx.moveTo(canvas.xStart, -radius);
-                ctx.lineTo(canvas.xStart, -radius + canvas.barLength);
-                ctx.stroke();
-                ctx.closePath();
                 ctx.rotate(degreesToRads(barAngleDeg));
             }
+
             ctx.restore();
         }
 
