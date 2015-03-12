@@ -416,7 +416,7 @@ Future.prototype.changeLightPos = function(value, axis) {
 
 Future.prototype.update = function() {
     //Perform any updates
-//Update data
+    //Update data
     this.delta = this.clock.getDelta();
     var mats = null, i;
 
@@ -538,9 +538,12 @@ Future.prototype.update = function() {
         this.root.rotation.y += this.rotInc;
     }
 
+    /*
     if(connectionManager.getConnectionStatus()) {
         connectionManager.requestData();
     }
+    */
+    this.requestData();
 
     BaseApp.prototype.update.call(this);
 };
@@ -586,6 +589,12 @@ Future.prototype.normaliseData = function(data) {
         this.normalValues[i] = (data[i] - this.minValues[i])/range;
     }
     */
+};
+
+Future.prototype.requestData = function() {
+    if(connectionManager.getConnectionStatus()) {
+        connectionManager.requestData();
+    }
 };
 
 Future.prototype.windowResize = function() {
@@ -714,6 +723,8 @@ $(document).ready(function() {
         app.createGUI();
 
         //GUI callbacks
+        //setInterval(app.requestData(), 60 * 1000);
+
         $(document).keydown(function (event) {
             app.keydown(event);
         });

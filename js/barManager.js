@@ -36,6 +36,11 @@ var barManager = (function() {
             var ctx = c.getContext("2d");
             ctx.strokeStyle = offColour;
             ctx.lineWidth = lineWidth;
+            //Text styles
+            ctx.fontFamily = '12px "eurostileregular"';
+            //ctx.fontFamily = '12px bold "Arial"';
+            //ctx.font = '12px Times';
+            ctx.fillStyle = '#ffffff';
             var canvasItem = {};
             canvasItem.element = element;
             canvasItem.width = c.width;
@@ -62,11 +67,6 @@ var barManager = (function() {
 
             var canvas = canvasList[barNumber];
             var ctx = canvas.ctx;
-            //Text styles
-            ctx.fontFamily = '12px "eurostileregular"';
-            //ctx.fontFamily = '12px bold "Arial"';
-            //ctx.font = '12px Times';
-            ctx.fillStyle = '#ffffff';
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             ctx.save();
 
