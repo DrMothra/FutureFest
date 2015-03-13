@@ -96,6 +96,7 @@ Future.prototype.init = function(container) {
     this.brainTime = 0;
     this.startUpCheck = true;
     this.loadedModel = null;
+    this.updateTime = 1/60;
 
     //Subscribe to pubnub
     //Don't use pubnub for now
@@ -273,7 +274,6 @@ Future.prototype.createScene = function() {
     canvasManager.createCanvas('meter', 0, 0, 0);
     barManager.createBars('meter');
     barManager.setTextDescription(brainData.getBrainZones());
-    barManager.drawBars(0, 5, 'O1');
 
     /*
     for(i=0; i<brainData.getNumZones()-2; ++i) {
@@ -448,6 +448,10 @@ Future.prototype.update = function() {
                 this.spriteMats[mats].opacity = this.normalValues[mats+6];
             }
             */
+            barManager.drawBars(0, this.normalValues);
+            for(mats=0; mats<this.spriteMats.length; ++mats) {
+                this.spriteMats[mats].opacity = this.normalValues[mats+6];
+            }
         }
     }
 
@@ -557,7 +561,11 @@ Future.prototype.update = function() {
         connectionManager.requestData();
     }
     */
-    this.requestData();
+    //this.brainTime += this.delta;
+    //if(this.brainTime >= this.updateTime) {
+        //this.brainTime = 0;
+        this.requestData();
+    //}
 
     BaseApp.prototype.update.call(this);
 };
@@ -613,10 +621,13 @@ Future.prototype.requestData = function() {
 
 Future.prototype.windowResize = function() {
     //Redraw layout
+    /*
     var pos = createLayout();
     for(var i=0; i<brainData.getNumZones()-2; ++i) {
         canvasManager.drawCanvas(i, pos[i].top, pos[i].left);
     }
+    */
+    barManager.resizeBars('meter', 0);
     BaseApp.prototype.windowResize.call(this);
 };
 
