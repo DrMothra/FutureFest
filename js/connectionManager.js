@@ -2,16 +2,15 @@
  * Created by atg on 09/03/2015.
  */
 //Sets up and manages connection
-
+var IDLE= 0, CONNECTING=1, CONNECTED=2;
 var connectionManager = (function() {
-
-    var connected = false;
+    var status = IDLE;
     var gotData = false;
     var data = null;
     var currentStatusHandler = null;
     var currentConnectHandler = null;
     var requestHandler = null;
-    var currentURL = "ws://192.168.50.195";
+    var currentURL = "ws://127.0.0.1";
     var socket;
 
     var defaultStatusHandler = function() {
@@ -19,7 +18,7 @@ var connectionManager = (function() {
     };
 
     var defaultConnectHandler = function() {
-        connected = true;
+        status = CONNECTED;
         console.log('Default connect handler');
     };
 
@@ -42,6 +41,7 @@ var connectionManager = (function() {
             console.log('Not connected to server');
             return;
         }
+        if(status != CONNECTED) return;
 
         var json = JSON.stringify(args);
         socket.send(json);
@@ -49,13 +49,15 @@ var connectionManager = (function() {
 
     return {
         getConnectionStatus: function() {
-            return connected;
+            return status;
         },
 
         connect: function(statusHandler, connectHandler) {
+            if(status === CONNECTING || status === CONNECTED) return;
             currentStatusHandler = (statusHandler != undefined) ? statusHandler : defaultStatusHandler;
             currentConnectHandler = (connectHandler != undefined) ? connectHandler : defaultConnectHandler;
 
+            status = CONNECTING;
             socket = new WebSocket(currentURL);
             socket.onopen = function() {
                 console.log('Socket opened');
@@ -69,6 +71,7 @@ var connectionManager = (function() {
                 console.log("Socket error!");
             };
             socket.onclose = function(event) {
+                status = IDLE;
                 console.log('Socket closed');
             };
         },

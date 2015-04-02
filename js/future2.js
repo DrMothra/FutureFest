@@ -6,7 +6,7 @@
 var brainData = (function() {
     //Brain zones
     //var brainZones = ['AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4', 'EXCITE-S', 'MEDIT', 'FRUST', 'BORED', 'TYPE', 'INTENSITY'];
-    var brainZones = ['TYPE', 'INTENSITY', 'BORED', 'EXCITE-S', 'MEDIT', 'FRUST', 'AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4'];
+    var brainZones = ['TYPE', 'INTENSITY', 'ENGAGE', 'EXCITE-S', 'MEDIT', 'FRUST', 'AF3', 'F7', 'F3', 'FC5', 'T7', 'P7', 'O1', 'O2', 'P8', 'T8', 'FC6', 'F4', 'F8', 'AF4'];
 
     var brainTextData = [];
     var brainRecord = {};
@@ -77,6 +77,7 @@ Future.prototype.init = function(container) {
     this.data = null;
     this.dataValues = null;
     this.normalValues = [];
+    this.normalChannels = 6;
     this.dataBuffer = [];
     this.minValues = [];
     this.maxValues = [];
@@ -589,7 +590,11 @@ Future.prototype.normaliseData = function(data) {
         }
     }
 
-    for(i=0; i<dataSize; ++i) {
+    //Don't normalise first 6 channels
+    for(i=0; i<this.normalChannels; ++i) {
+        this.normalValues[i] = data[i];
+    }
+    for(i=this.normalChannels; i<dataSize; ++i) {
         this.normalValues[i] = (data[i] - this.minValues[i])/(this.maxValues[i] - this.minValues[i]);
     }
 
@@ -614,8 +619,11 @@ Future.prototype.normaliseData = function(data) {
 };
 
 Future.prototype.requestData = function() {
-    if(connectionManager.getConnectionStatus()) {
+    if(connectionManager.getConnectionStatus() === CONNECTED) {
         connectionManager.requestData();
+    } else {
+        //See if we need to try and reconnect
+        connectionManager.connect();
     }
 };
 
