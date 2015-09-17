@@ -38,7 +38,7 @@ var brainData = (function() {
 })();
 
 //Init this app from base
-var RANDOM_FIRE_TIME = 1;
+var RANDOM_FIRE_TIME = 0.1;
 var ALPHA_TRANSITION_TIME = 20;
 var ALPHA_STEADY_TIME = 10;
 //Alpha states
@@ -109,7 +109,7 @@ Future.prototype.init = function(container) {
     */
 
     //Connect to server
-    connectionManager.connect();
+    //connectionManager.connect();
 
     BaseApp.prototype.init.call(this, container);
 
@@ -293,8 +293,8 @@ Future.prototype.createGUI = function() {
         this.GlowOpacity = 0.7;
         this.RotateSpeed = 0.002;
         this.SinewaveData = false;
-        this.RandomData = false;
-        this.NeuroData = true;
+        this.RandomData = true;
+        this.NeuroData = false;
         this.TestSphere = false;
         //Light Pos
         this.LightX = 200;
@@ -500,13 +500,10 @@ Future.prototype.update = function() {
             for(mats=0; mats<this.spriteMats.length; ++mats) {
                 this.spriteMats[mats].opacity = Math.random();
             }
-            for(i=0; i<14; ++i) {
-                barManager.drawBars(i, this.spriteMats[i].opacity, brainData.getZoneName(i));
+            for(i=0; i<brainData.getNumZones(); ++i) {
+                this.normalValues[i] = Math.random();
             }
-            //DEBUG
-            for(i=14; i<18; ++i) {
-                barManager.drawBars(i, 0.5, brainData.getZoneName(i));
-            }
+            barManager.drawBars(0, this.normalValues);
         }
     }
 
@@ -565,7 +562,7 @@ Future.prototype.update = function() {
     //this.brainTime += this.delta;
     //if(this.brainTime >= this.updateTime) {
         //this.brainTime = 0;
-        this.requestData();
+        //this.requestData();
     //}
 
     BaseApp.prototype.update.call(this);
